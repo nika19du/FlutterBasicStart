@@ -1,7 +1,6 @@
 
-import 'dart:html';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/Authentication/signup.dart';
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -17,6 +16,9 @@ class LoginScreenState extends State<LoginScreen>{
   final username = TextEditingController();
   final password = TextEditingController();
 
+  // creating global key for login form
+  final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,53 +26,105 @@ class LoginScreenState extends State<LoginScreen>{
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-                child: Column(
-                children: [
-                  // Username field
-                //  Image.network('https://storage.googleapis.com/gweb-uniblog-publish-prod/images/PASSKEY_ILLUSTRATION-01.width-1200.format-webp.webp'),
-                  Container(
-                    margin: EdgeInsets.all(8),
-                    padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.deepPurple.withOpacity(.3)),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      icon: Icon(Icons.person),
-                      border:InputBorder.none,
-                      hintText: "Username",
-                  ),
-                  ),
-
-              ),
-                 // Password Field
-                  Container(
-                    margin: EdgeInsets.all(8),
-                    padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.deepPurple.withOpacity(.3)),
+                child:Form(
+                  key: formKey,
+                  child: Column(
+                  children: [
+                    // Username field
+                    Image.asset("lib/assets/login.png", width: 210),
+                    const SizedBox(height: 15,),
+                    Container(
+                      margin: EdgeInsets.all(8),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.deepPurple.withOpacity(.2)),
                     child: TextFormField(
-                      obscureText: hidePassword,
-                      decoration:  InputDecoration(
-                        icon: Icon(Icons.lock),
+                      controller: username,
+                      validator: (value){
+                        if(value!.isEmpty){
+                          return "username is required";
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(
+                        icon: Icon(Icons.person),
                         border:InputBorder.none,
-                        hintText: "Password",
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            hidePassword ? Icons.visibility : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              hidePassword = !hidePassword; // toggle button
-                            });
-                          },
-
-                        ),
-
+                        hintText: "Username",
                     ),
-                    ))
-                ])
+                    ),
+
+                ),
+                   // Password Field
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      padding:const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.deepPurple.withOpacity(.3)),
+                      child: TextFormField(
+                        controller: password,
+                        validator: (value){
+                          if(value!.isEmpty){
+                            return "password is required";
+                          }
+                          return null;
+                        },
+                        obscureText: hidePassword,
+                        decoration:  InputDecoration(
+                          icon: const Icon(Icons.lock),
+                          border:InputBorder.none,
+                          hintText: "Password",
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              hidePassword ? Icons.visibility : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                hidePassword = !hidePassword; // toggle button
+                              });
+                            },
+
+                          ),
+
+                      ),
+                      )),
+
+                    const SizedBox(height: 10,),
+                    // Login button
+                    Container(
+                      height: 55,
+                      width: MediaQuery.of(context).size.width *.9,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.deepPurple
+                      ) ,
+                    child:
+                      TextButton(
+                          onPressed: (){
+                            Navigator.push(context,MaterialPageRoute(builder: (context)=>const SignUp()));
+                          },
+                          child: Text("LOGIN",style:TextStyle(color: Colors.white)))
+
+                      ),
+
+                    // Sign up button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have an account?"),
+                        TextButton(onPressed: ()
+                        {
+                          // Navigate to sign up
+                          if(formKey.currentState!.validate()){
+                            // Login here
+                          }
+
+                        }, child: const Text("SIGN UP"))
+                      ],
+                  )
+                ]))
+
       )),
     ));
   }
