@@ -1,6 +1,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/Authentication/signup.dart';
+import 'package:flutter_demo/SQLite/sqlite.dart';
+
+import '../JsonModels/users.dart';
+import '../Views/notes.dart';
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -12,12 +16,26 @@ class LoginScreen extends StatefulWidget{
 
 class LoginScreenState extends State<LoginScreen>{
   bool hidePassword = false;
+  bool isLoginTrue = false;
   // TextEditing controller to control the text when we enter into it
   final username = TextEditingController();
   final password = TextEditingController();
 
   // creating global key for login form
   final formKey = GlobalKey<FormState>();
+
+  final db = DatabaseHelper();
+
+  login(){
+   var response= db.login(Users(userName: username.text,userPassword: password.text));
+   if(response == true){//getting notes
+     Navigator.push(context,MaterialPageRoute(builder: (context)=>Notes()));
+   } else{
+     setState(() {
+       isLoginTrue = true;
+     });
+   }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,11 +136,17 @@ class LoginScreenState extends State<LoginScreen>{
                           // Navigate to sign up
                           if(formKey.currentState!.validate()){
                             // Login here
+                            login();
                           }
 
                         }, child: const Text("SIGN UP"))
                       ],
-                  )
+                  ),
+                  // dissabling this message in default, when user and pass is icorrect we will trigger this message
+                  isLoginTrue ?
+                    const Text("Username or password is incorrect",style: TextStyle(color: Colors.red))
+                    : const SizedBox()
+
                 ]))
 
       )),

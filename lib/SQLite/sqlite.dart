@@ -1,44 +1,44 @@
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../JsonModels/users.dart';
 
 class DatabaseHelper {
   final databaseName = "notes.db";
-  String noteTable= "CREATE TABLE notes(noteId INTEGER PRIMARY KEY AUTOINCREMENT, noteTitle TEXT NOT NULL, noteContext TEXT NOT NULL";
+  final String noteTable =
+      "CREATE TABLE notes(noteId INTEGER PRIMARY KEY AUTOINCREMENT, noteTitle TEXT NOT NULL, noteContent TEXT NOT NULL, createdAt TEXT DEFAULT CURRENT_TIMESTAMP)";
+  final String users =
+      "CREATE TABLE users (usrId INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT UNIQUE, userPassword TEXT)";
 
-  String users = "create table users (usrId INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT UNIQE, userPassword TEXT)";
-  Future<Database> initDb() async{
+  Future<Database> initDb() async {
     final databasePath = await getDatabasesPath();
-    final path = join(databasePath,databaseName);
+    final path = join(databasePath, databaseName);
 
-    return openDatabase(path,version:1,onCraeate:(db, version) async{0
+    return openDatabase(path, version: 1, onCreate: (db, version) async {
       await db.execute(users);
       await db.execute(noteTable);
     });
   }
 
-  // Login Method
-    Future<bool> login(Users user) async {
-      final Database db = await initDb();
-      var result = await db.rawQuery(
-          "select * from users where username ='${user.userName}' AND '${user
-              .userPassword}'");
-      if (result.isNotEmpt y) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+  Future<bool> login(Users user) async {
+    final Database db = await initDb();
+    final List<Map<String, dynamic>> result = await db.query(
+      'users',
+      where: 'userName = ? AND userPassword = ?',
+      whereArgs: [user.userName, user.userPassword],
+    );
 
-  // Sign up
-    Future<int> signup(Users user) async {
-      final Database db = new
-      await initDb();
+    return result.isNotEmpty;
+  }
 
-      return db.insert('users', user.toMap());
-    }
+  //Sign up
+  Future<int> signup(Users user) async {
+    final Database db = await initDb();
+
+    return db.insert('users', user.toMap());
+  }
 
 
-}
 
-class Database {
+
 }

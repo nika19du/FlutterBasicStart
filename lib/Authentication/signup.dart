@@ -3,6 +3,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/Authentication/login.dart';
+import 'package:flutter_demo/SQLite/sqlite.dart';
+
+import '../JsonModels/users.dart';
 
 class SignUp extends StatefulWidget{
   const SignUp({super.key});
@@ -142,7 +145,14 @@ class _SignUpState extends State<SignUp> {
                 child:
                 TextButton(
                     onPressed: (){
+                      if(formKey.currentState!.validate()){
+                        final db=DatabaseHelper();
 
+                        db.signup(Users(userName:username.text,userPassword: password.text))
+                            .whenComplete(() {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                        });
+                      }
                     },
                     child: Text("SIGN UP",style:TextStyle(color: Colors.white)))
 
